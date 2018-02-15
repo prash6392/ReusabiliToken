@@ -8,13 +8,14 @@ import numpy as np
 class Customer(object):
     __metaclass__ = ABCMeta
     CUSTOMER_ID = 0
-    def __init__(self):
+    def __init__(self, type_):
         self.customer_id = Customer.CUSTOMER_ID
         Customer.CUSTOMER_ID += 1
         self.reputation = {}
         self.coins = 0
         self.recycle_prob = 0.9
         self.preferred_shop = -1
+        self.type_ = type_
 
     def transfer_coin(self, coin_count):
         self.coins += coin_count
@@ -43,13 +44,13 @@ class Customer(object):
             return False
 
     def choose_to_pay_by_coin(self):
-        if self.coins > 10:
+        if self.coins > 10000:
                 return True
         else:
             return False
 
     def get_coin_spend(self):
-        return 10
+        return 10000
 
     def get_coin(self):
         return self.coins
@@ -60,6 +61,9 @@ class Customer(object):
         else:
             return 0
 
+    def get_type(self):
+        return self.type_
+
     @abstractmethod
     def choose_shop(self, num_shops):
         pass
@@ -68,7 +72,7 @@ class Customer(object):
 class GoodCustomer(Customer):
 
     def __init__(self):
-        super(GoodCustomer, self).__init__()
+        super(GoodCustomer, self).__init__('g')
         self.recycle_prob = 0.9
 
     def choose_shop(self, num_shops):
@@ -81,7 +85,7 @@ class GoodCustomer(Customer):
 class BadCustomer(Customer):
 
     def __init__(self):
-        super(BadCustomer, self).__init__()
+        super(BadCustomer, self).__init__('b')
         self.recycle_prob = 0.1
 
     def choose_shop(self, num_shops):
@@ -91,7 +95,7 @@ class BadCustomer(Customer):
 class NeutralCustomer(Customer):
 
     def __init__(self):
-        super(NeutralCustomer, self).__init__()
+        super(NeutralCustomer, self).__init__('n')
         self.recycle_prob = 0.60
         self.preferred_shops = []
         self.preference_ratio = 0.30

@@ -56,6 +56,7 @@ class SmartContract(object):
             if self.shop_payment_times[shop_address] - current_time >= self.payment_due_date:
                 if shop_address not in self.black_listed_shops:
                     self.black_listed_shops.append(shop_address)
+                    print('shop {} got blacklisted.'.format(shop_address))
 
     def make_payment(self, shop_address, payment):
         if shop_address not in self.known_shops:
@@ -175,14 +176,15 @@ class SmartContract(object):
                     self.reputation_map[customer][iter_shops] -= curr_rep
 
     def _calculate_new_coins_for_customer(self, customer_reputation):
-        new_coins = customer_reputation*self.coins_per_reputation_token
+        # new_coins = customer_reputation*self.coins_per_reputation_token
+        new_coins = 1
         # diminishing returns functions
         # new_coins = self.coin_limit - np.exp(np.log(self.coin_limit) - 0.005*new_coins)
         return new_coins
 
     def _calculate_reputation_for_customer(self, customer_reputation, visits):
         # new_rep = customer_reputation + 0.25
-        new_rep = self.reputation_limit - np.exp(np.log(self.reputation_limit) - 0.005*visits)
+        new_rep = self.reputation_limit - np.exp(np.log(self.reputation_limit) - 0.0005*visits)
         return new_rep
 
     def calculate_shop_reputation(self, shop_address):

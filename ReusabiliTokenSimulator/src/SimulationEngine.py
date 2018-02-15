@@ -16,7 +16,7 @@ class SimulationEngine(object):
         self.num_customers = num_customers
         self.num_shops = num_shops
         self.sim_iters = sim_iters
-        self.customers = self._create_customers([0.3, 0.1, 0.6])
+        self.customers = self._create_customers([0.2, 0.2, 0.6])
         self.shops = self._create_shops()
         self.time_oracle = SimulationTimeOracle()
         self.shop_list_oracle = ShopListOracle()
