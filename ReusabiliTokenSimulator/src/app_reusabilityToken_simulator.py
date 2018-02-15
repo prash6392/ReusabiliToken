@@ -26,9 +26,9 @@ def run_simulator():
     sim_engine = SimulationEngine(num_customers=num_customers,
                                   num_shops=num_shops,
                                   sim_iters=num_iterations,
-                                  coin_limit=200,
-                                  rep_limit=100,
-                                  coin_rep_factor=1.0,
+                                  coin_limit=200000,
+                                  rep_limit=100000,
+                                  coin_rep_factor=0.50,
                                   payment_due=30)
     sim_engine.run()
 

@@ -105,26 +105,23 @@ class SmartContract(object):
 
             # get customer reputation
             customer_rep = 0
-            if self.reputation_map.has_key(customer_address):
-                if self.reputation_map[customer_address].has_key(shop_address):
+            if customer_address in self.reputation_map:
+                if shop_address in self.reputation_map[customer_address]:
                     customer_rep = self.reputation_map[customer_address][shop_address]
             # calculate the number of coins to issue
             new_coins = self._calculate_new_coins_for_customer(customer_rep)
             new_rep = self._calculate_reputation_for_customer(customer_rep)
             # transfer coins and reputation to the customer
-            if self.coin_map.has_key(customer_address):
-                if self.coin_map[customer_address].has_key(shop_address):
-                    if self.coin_map[customer_address][shop_address] >= self.coin_limit:
-                        self.coin_map[customer_address][shop_address] = self.coin_limit
-                    else:
-                        self.coin_map[customer_address][shop_address] += new_coins
-                else:
-                    self.coin_map[customer_address][shop_address] = new_coins
+            if customer_address in self.coin_map:
+                # if self.coin_map[customer_address] >= self.coin_limit:
+                #     self.coin_map[customer_address] = self.coin_limit
+                # else:
+                #     self.coin_map[customer_address] += new_coins
+                self.coin_map[customer_address] += new_coins
             else:
-                self.coin_map[customer_address] = {}
-                self.coin_map[customer_address][shop_address] = new_coins
+                self.coin_map[customer_address] = new_coins
 
-            if self.reputation_map.has_key(customer_address):
+            if customer_address in self.reputation_map:
                 if self.reputation_map[customer_address].has_key(shop_address):
                     if self.reputation_map[customer_address][shop_address] >= self.reputation_limit:
                         self.reputation_map[customer_address][shop_address] = self.reputation_limit
@@ -136,7 +133,7 @@ class SmartContract(object):
                 self.reputation_map[customer_address] = {}
                 self.reputation_map[customer_address][shop_address] = new_rep
 
-            if not self.shop_payment_times.has_key(shop_address):
+            if not shop_address in self.shop_payment_times:
                 self.shop_payment_times[shop_address] = self.time_oracle.get_time()
 
             return True, new_coins, new_rep
@@ -144,26 +141,35 @@ class SmartContract(object):
         return False, -1, -1
 
     def customer_buys_with_coin(self, customer_address, shop_address, num_coins):
-        self.coin_map[customer_address][shop_address] -= num_coins
-        if self.shop_coin_map.has_key(shop_address):
+        self.coin_map[customer_address] -= num_coins
+        if shop_address in self.shop_coin_map:
             self.shop_coin_map[shop_address] += num_coins
         else:
             self.shop_coin_map[shop_address] = num_coins
 
-        if self.cus_buys_with_coin_map.has_key(customer_address):
+        if customer_address in self.cus_buys_with_coin_map:
             self.cus_buys_with_coin_map[customer_address] += 1
         else:
             self.cus_buys_with_coin_map[customer_address] = 1
 
+    def deteriorate_customer_reputation(self, sender_address, value=0.5):
+        if sender_address != self.owner_address:
+            return False
+
+        for customer in self.reputation_map:
+            for iter_shops in self.reputation_map[customer]:
+                if self.reputation_map[customer][iter_shops] >= value:
+                    self.reputation_map[customer][iter_shops] -= value
+
     def _calculate_new_coins_for_customer(self, customer_reputation):
         new_coins = customer_reputation*self.coins_per_reputation_token
         # diminishing returns functions
-        new_coins = self.coin_limit - np.exp(np.log(self.coin_limit) - 0.1*new_coins)
+        new_coins = self.coin_limit - np.exp(np.log(self.coin_limit) - 0.005*new_coins)
         return new_coins
 
     def _calculate_reputation_for_customer(self, customer_reputation):
-        new_rep = customer_reputation+1
-        new_rep = self.reputation_limit - np.exp(np.log(self.reputation_limit) - 0.1*new_rep)
+        new_rep = customer_reputation + 0.25
+        new_rep = self.reputation_limit - np.exp(np.log(self.reputation_limit) - 0.005*new_rep)
         return new_rep
 
     def calculate_shop_reputation(self, shop_address):
@@ -176,7 +182,7 @@ class SmartContract(object):
 
     def calculate_customer_reputation(self, customer_address):
         reputation = 0
-        if self.reputation_map.has_key(customer_address):
+        if customer_address in self.reputation_map:
             for iter_shops in self.reputation_map[customer_address]:
                 reputation += self.reputation_map[customer_address][iter_shops]
         return reputation

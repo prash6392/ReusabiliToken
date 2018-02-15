@@ -54,7 +54,7 @@ class SimulationEngine(object):
                 chosen_shop = customer.choose_shop(self.num_shops)
                 shop_address = self.shops[chosen_shop].get_shop_address()
                 # choose whether the customer wants to pay by coin
-                buy_with_coins = customer.choose_to_pay_by_coin(shop_address)
+                buy_with_coins = customer.choose_to_pay_by_coin()
                 if buy_with_coins is True:
                     # notify the smart contract
                     self.smart_contract.customer_buys_with_coin(customer.get_address(),
@@ -75,10 +75,8 @@ class SimulationEngine(object):
                     else:
                         res, coins, reps = self.smart_contract.verify_claim(shop_address, customer.get_address())
                         if res is True:
-                            if customer.get_coin(shop_address) > self.smart_contract.coin_limit:
-                                customer.set_coin(self.smart_contract.coin_limit, shop_address)
-                            else:
-                                customer.transfer_coin(coins, shop_address)
+                            customer.transfer_coin(coins)
+
                             if customer.get_reputation(shop_address) > self.smart_contract.reputation_limit:
                                 customer.set_reputation(shop_address, self.smart_contract.reputation_limit)
                             else:
@@ -89,6 +87,9 @@ class SimulationEngine(object):
                     shop.pay_dues_to_smart_contract(self.smart_contract)
 
                 self.smart_contract.check_payments(self.address, day)
+
+            # deteriorate customer reputation at every simulation step
+            self.smart_contract.deteriorate_customer_reputation(self.address, value=30.0)
 
             # visualize the market at every time step
             ax = visualize_market(self.smart_contract, self.customers, self.shops, ax[0], ax[1], ax[2], ax[3])

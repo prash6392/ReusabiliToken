@@ -12,21 +12,18 @@ class Customer(object):
         self.customer_id = Customer.CUSTOMER_ID
         Customer.CUSTOMER_ID += 1
         self.reputation = {}
-        self.coins = {}
+        self.coins = 0
         self.recycle_prob = 0.9
         self.preferred_shop = -1
 
-    def transfer_coin(self, coin_count, shop_address):
-        if self.coins.has_key(shop_address):
-            self.coins[shop_address] += coin_count
-        else:
-            self.set_coin(coin_count, shop_address)
+    def transfer_coin(self, coin_count):
+        self.coins += coin_count
 
-    def set_coin(self, coins, shop_address):
-        self.coins[shop_address] = coins
+    def set_coin(self, coins):
+        self.coins = coins
 
     def transfer_reputation(self, reputation, shop_address):
-        if self.reputation.has_key(shop_address):
+        if shop_address in self.reputation:
             self.reputation[shop_address]['reputation'] += reputation
         else:
             self.set_reputation(shop_address, reputation)
@@ -45,9 +42,8 @@ class Customer(object):
         else:
             return False
 
-    def choose_to_pay_by_coin(self, shop_address):
-        if self.coins.has_key(shop_address):
-            if self.coins[shop_address] > 10:
+    def choose_to_pay_by_coin(self):
+        if self.coins > 10:
                 return True
         else:
             return False
@@ -55,14 +51,11 @@ class Customer(object):
     def get_coin_spend(self):
         return 10
 
-    def get_coin(self, shop_address):
-        if self.coins.has_key(shop_address):
-            return self.coins[shop_address]
-        else:
-            return 0
+    def get_coin(self):
+        return self.coins
 
     def get_reputation(self, shop_address):
-        if self.reputation.has_key(shop_address):
+        if shop_address in self.reputation:
             return self.reputation[shop_address]['reputation']
         else:
             return 0
