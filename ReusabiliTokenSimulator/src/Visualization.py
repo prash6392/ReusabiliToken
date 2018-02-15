@@ -58,4 +58,6 @@ def diminishing_returns(max_val, b1, num_samples=100):
     return max_val - np.exp(np.log(max_val) - b1*x)
 
 
-
+if __name__ == '__main__':
+    visualize_function(diminishing_returns(max_val=200, b1=0.001, num_samples=10000), 'diminishing returns', color='blue')
+    plt.show()
