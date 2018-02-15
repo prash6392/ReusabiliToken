@@ -89,7 +89,7 @@ class SimulationEngine(object):
                 self.smart_contract.check_payments(self.address, day)
 
             # deteriorate customer reputation at every simulation step
-            self.smart_contract.deteriorate_customer_reputation(self.address, value=30.0)
+            self.smart_contract.deteriorate_customer_reputation(self.address, value=0.10)
 
             # visualize the market at every time step
             ax = visualize_market(self.smart_contract, self.customers, self.shops, ax[0], ax[1], ax[2], ax[3])

@@ -164,14 +164,15 @@ class SmartContract(object):
         else:
             self.cus_buys_with_coin_map[customer_address] = 1
 
-    def deteriorate_customer_reputation(self, sender_address, value=0.5):
+    def deteriorate_customer_reputation(self, sender_address, value=0.05):
         if sender_address != self.owner_address:
             return False
 
         for customer in self.reputation_map:
             for iter_shops in self.reputation_map[customer]:
-                if self.reputation_map[customer][iter_shops] >= value:
-                    self.reputation_map[customer][iter_shops] -= value
+                curr_rep = self.reputation_map[customer][iter_shops]*value
+                if self.reputation_map[customer][iter_shops] >= curr_rep:
+                    self.reputation_map[customer][iter_shops] -= curr_rep
 
     def _calculate_new_coins_for_customer(self, customer_reputation):
         new_coins = customer_reputation*self.coins_per_reputation_token

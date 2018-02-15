@@ -24,12 +24,23 @@ def visualize_market(smart_contract, customer_list, shop_list, ax_cus=None, ax_s
         ax_ca = f.add_subplot(2, 2, 4)
     ax_cus.set_title('customer reputation')
     ax_cus.grid(True)
+    cus_labels = ['c' + str(i) for i in range(len(customer_list))]
+    ax_cus.set_xticklabels(cus_labels)
+    ax_cus.set_xticks(np.arange(len(customer_list)))
+    ax_cus.set_ylim(0, smart_contract.reputation_limit+100)
     ax_shop.set_title('shop reputation')
     ax_shop.grid(True)
+    shop_labels = ['s' + str(i) for i in range(len(shop_list))]
+    ax_shop.set_xticklabels(shop_labels)
+    ax_shop.set_xticks(np.arange(len(shop_list)))
     ax_cp.set_title('coin purchases')
     ax_cp.grid(True)
+    ax_cp.set_xticklabels(cus_labels)
+    ax_cp.set_xticks(np.arange(len(customer_list)))
     ax_ca.set_title('coins re-collected at shops')
     ax_ca.grid(True)
+    ax_ca.set_xticklabels(shop_labels)
+    ax_ca.set_xticks(np.arange(len(shop_list)))
     cus_reps = []
     shop_reps = []
     for customer in customer_list:
