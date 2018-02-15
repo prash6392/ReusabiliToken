@@ -44,13 +44,13 @@ class Customer(object):
             return False
 
     def choose_to_pay_by_coin(self):
-        if self.coins > 10000:
+        if self.coins > 100:
                 return True
         else:
             return False
 
     def get_coin_spend(self):
-        return 10000
+        return 100
 
     def get_coin(self):
         return self.coins
